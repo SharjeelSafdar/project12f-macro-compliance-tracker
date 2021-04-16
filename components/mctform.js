@@ -7,6 +7,7 @@ const MCTForm = ({ data, item, onChange }) => {
         <input
           type="number"
           name={item + " Calories"}
+          value={data["calories"][item.toLowerCase()]}
           onChange={e => onChange(e)}
           className="bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
         />
@@ -16,6 +17,7 @@ const MCTForm = ({ data, item, onChange }) => {
         <input
           type="number"
           name={item + " Carbs"}
+          value={data["carbs"][item.toLowerCase()]}
           onChange={e => onChange(e)}
           className="bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
         />
@@ -25,6 +27,7 @@ const MCTForm = ({ data, item, onChange }) => {
         <input
           type="number"
           name={item + " Fat"}
+          value={data["fat"][item.toLowerCase()]}
           onChange={e => onChange(e)}
           className="bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
         />
@@ -34,6 +37,7 @@ const MCTForm = ({ data, item, onChange }) => {
         <input
           type="number"
           name={item + " Protein"}
+          value={data["protein"][item.toLowerCase()]}
           onChange={e => onChange(e)}
           className="bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
         />
