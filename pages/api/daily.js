@@ -1,13 +1,25 @@
-import nextConnect from "next-connect";
 import { ObjectID } from "mongodb";
 
-import middleware from "../../middleware/database";
+import { connectToDatabase } from "../../util/mongodb";
 
-const handler = nextConnect();
+export default async (req, res) => {
+  const { db } = await connectToDatabase();
 
-handler.use(middleware);
+  if (req.method === "POST") {
+    let data = req.body;
+    data = JSON.parse(data);
+    data.date = new Date(data.date);
+    await db
+      .collection("daily")
+      .updateOne(
+        { date: new Date(data.date) },
+        { $set: data },
+        { upsert: true }
+      );
 
-handler.get(async (req, res) => {
+    res.status(200).json({ message: "OK" });
+    return;
+  }
   const { date } = req.query;
   const dataModel = {
     _id: new ObjectID(),
@@ -20,26 +32,20 @@ handler.get(async (req, res) => {
   let doc = {};
 
   if (date) {
-    doc = await req.db.collection("daily").findOne({ date: new Date(date) });
+    const currentToday = new Date(date);
+    const dateString = `${currentToday
+      .toISOString()
+      .slice(0, 10)}T00:00:00.000Z`;
+    doc = await db.collection("daily").findOne({ date: new Date(date) });
   } else {
-    doc = await req.db.collection("daily").findOne();
+    const dateToday = new Date();
+    const dateString = `${dateToday.toISOString().slice(0, 10)}T00:00:00.000Z`;
+    doc = await db.collection("daily").findOne({ date: new Date(dateString) });
   }
   if (doc == null) {
     doc = dataModel;
   }
 
-  res.json(doc);
-});
-
-handler.post(async (req, res) => {
-  let data = req.body;
-  data = JSON.parse(data);
-  data.date = new Date(data.date);
-  const doc = await req.db
-    .collection("daily")
-    .updateOne({ date: new Date(data.date) }, { $set: data }, { upsert: true });
-
-  res.json({ message: "OK" });
-});
-
-export default handler;
+  res.status(200).json(doc);
+  return;
+};
