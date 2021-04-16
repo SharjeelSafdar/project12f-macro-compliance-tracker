@@ -23,9 +23,7 @@ const Home = ({ data }) => {
 
   const getDataForPreviousDay = async () => {
     const currentDate = dayjs(results.date);
-    const newDate = currentDate
-      .subtract(1, "day")
-      .format("YYYY-MM-DDTHH:mm:ss");
+    const newDate = currentDate.subtract(1, "day").format("YYYY-MM-DD");
     const res = await fetch("http://localhost:3000/api/daily?date=" + newDate);
     const json = await res.json();
 
@@ -34,7 +32,7 @@ const Home = ({ data }) => {
 
   const getDataForNextDay = async () => {
     const currentDate = dayjs(results.date);
-    const newDate = currentDate.add(1, "day").format("YYYY-MM-DDTHH:mm:ss");
+    const newDate = currentDate.add(1, "day").format("YYYY-MM-DD");
     const res = await fetch("http://localhost:3000/api/daily?date=" + newDate);
     const json = await res.json();
 
@@ -67,15 +65,18 @@ const Home = ({ data }) => {
         </div>
 
         <div className="flex text-center">
-          <div className="w-1/3 bg-gray-200 p-4">
-            <button onClick={getDataForPreviousDay}>Previous Day</button>
-          </div>
+          <button
+            className="w-1/3 bg-gray-200 p-4"
+            onClick={getDataForPreviousDay}
+          >
+            Previous Day
+          </button>
           <div className="w-1/3 p-4">
             {dayjs(results.date).format("DD/MM/YYYY")}
           </div>
-          <div className="w-1/3 bg-gray-200 p-4">
-            <button onClick={getDataForNextDay}>Next Day</button>
-          </div>
+          <button className="w-1/3 bg-gray-200 p-4" onClick={getDataForNextDay}>
+            Next Day
+          </button>
         </div>
 
         <div className="flex mb-4 text-center">
