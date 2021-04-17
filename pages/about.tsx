@@ -1,7 +1,9 @@
+import React, { FC } from "react";
 import Head from "next/head";
+
 import Nav from "../components/nav";
 
-const About = () => {
+const About: FC = () => {
   return (
     <div>
       <Head>

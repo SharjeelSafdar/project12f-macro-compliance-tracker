@@ -1,6 +1,13 @@
-import { useState, useEffect } from "react";
+import React, { FC, useState, useEffect } from "react";
 
-const Result = ({ results }) => {
+import { Macros, MacroNames } from "../next-env";
+
+interface ResultProps {
+  results: Macros;
+  label: MacroNames;
+}
+
+const Result: FC<ResultProps> = ({ results, label }) => {
   const [bg, setBg] = useState("");
 
   useEffect(() => {
@@ -13,7 +20,7 @@ const Result = ({ results }) => {
 
     if (+results.total >= min && +results.total <= max) {
       setBg("bg-green-500");
-    } else if (results.total < min) {
+    } else if (+results.total < min) {
       setBg("bg-blue-500");
     } else {
       setBg("bg-red-500");
@@ -26,11 +33,11 @@ const Result = ({ results }) => {
         {results.total}
         <div className="flex text-sm p-4">
           <div className="w-1/3">{+results.target - +results.variant}</div>
-          <div className="w-1/3 font-bold">{results.target}</div>
+          <div className="w-1/3 font-bold">{+results.target}</div>
           <div className="w-1/3">{+results.target + +results.variant}</div>
         </div>
       </h2>
-      <h3 className="text-xl">{results.label}</h3>
+      <h3 className="text-xl">{label[0].toUpperCase() + label.slice(1)}</h3>
     </div>
   );
 };

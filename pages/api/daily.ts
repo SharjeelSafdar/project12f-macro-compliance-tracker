@@ -1,9 +1,14 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import { ObjectID } from "mongodb";
 
 import { connectToDatabase } from "../../util/mongodb";
 
-export default async (req, res) => {
-  const { db } = await connectToDatabase();
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const connection = await connectToDatabase();
+  if (!connection) {
+    throw new Error("Error connecting to database.");
+  }
+  const db = connection.db;
 
   if (req.method === "POST") {
     let data = req.body;
@@ -21,6 +26,14 @@ export default async (req, res) => {
     return;
   }
   const { date } = req.query;
+  let currentDate: string | undefined;
+  if (typeof date === "string") {
+    currentDate = date;
+  } else if (typeof date === "undefined") {
+    currentDate = undefined;
+  } else {
+    currentDate = date[0];
+  }
   const dataModel = {
     _id: new ObjectID(),
     date: date,
@@ -31,12 +44,8 @@ export default async (req, res) => {
   };
   let doc = {};
 
-  if (date) {
-    const currentToday = new Date(date);
-    const dateString = `${currentToday
-      .toISOString()
-      .slice(0, 10)}T00:00:00.000Z`;
-    doc = await db.collection("daily").findOne({ date: new Date(date) });
+  if (currentDate) {
+    doc = await db.collection("daily").findOne({ date: new Date(currentDate) });
   } else {
     const dateToday = new Date();
     const dateString = `${dateToday.toISOString().slice(0, 10)}T00:00:00.000Z`;

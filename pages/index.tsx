@@ -1,22 +1,26 @@
-import { useState } from "react";
+import React, { FC, useState } from "react";
+import { GetStaticProps } from "next";
 import Head from "next/head";
-import fetch from "isomorphic-unfetch";
 import dayjs from "dayjs";
 
-import Nav from "../components/nav";
 import Result from "../components/result";
 import MCTForm from "../components/mctform";
+import { Data, MacroNumbers, MacroNames } from "../next-env";
 
-const Home = ({ data }) => {
+interface HomeProps {
+  data: Data;
+}
+
+const Home: FC<HomeProps> = ({ data }) => {
   const [results, setResults] = useState(data);
 
-  const onChange = e => {
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = e => {
     const data = { ...results };
     const name = e.target.name;
-    const resultType = name.split(" ")[0].toLowerCase();
-    const resultMacro = name.split(" ")[1].toLowerCase();
+    const resultType = name.split(" ")[0] as MacroNumbers;
+    const resultMacro = name.split(" ")[1] as MacroNames;
 
-    data[resultMacro][resultType] = e.target.value;
+    data[resultMacro][resultType] = +e.target.value;
 
     setResults(data);
   };
@@ -40,7 +44,7 @@ const Home = ({ data }) => {
   };
 
   const updateMacros = async () => {
-    const res = await fetch("http://localhost:3000/api/daily", {
+    await fetch("http://localhost:3000/api/daily", {
       method: "post",
       body: JSON.stringify(results),
     });
@@ -80,16 +84,16 @@ const Home = ({ data }) => {
         </div>
 
         <div className="flex mb-4 text-center">
-          <Result results={results.calories} />
-          <Result results={results.carbs} />
-          <Result results={results.fat} />
-          <Result results={results.protein} />
+          <Result results={results.calories} label="calories" />
+          <Result results={results.carbs} label="carbs" />
+          <Result results={results.fat} label="fat" />
+          <Result results={results.protein} label="protein" />
         </div>
 
         <div className="flex">
-          <MCTForm data={results} item="Total" onChange={onChange} />
-          <MCTForm data={results} item="Target" onChange={onChange} />
-          <MCTForm data={results} item="Variant" onChange={onChange} />
+          <MCTForm data={results} item="total" onChange={onChange} />
+          <MCTForm data={results} item="target" onChange={onChange} />
+          <MCTForm data={results} item="variant" onChange={onChange} />
         </div>
 
         <div className="flex text-center">
@@ -107,7 +111,7 @@ const Home = ({ data }) => {
   );
 };
 
-export const getStaticProps = async context => {
+export const getStaticProps: GetStaticProps = async () => {
   const res = await fetch("http://localhost:3000/api/daily");
   const json = await res.json();
   return {
