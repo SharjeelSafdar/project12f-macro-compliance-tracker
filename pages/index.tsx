@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import dayjs from "dayjs";
 
@@ -112,7 +112,7 @@ const Home: FC<HomeProps> = ({ data }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const res = await fetch(apiUrl);
   const json = await res.json();
   return {
