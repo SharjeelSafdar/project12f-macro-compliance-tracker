@@ -10,6 +10,7 @@ import { Data, MacroNumbers, MacroNames } from "../next-env";
 interface HomeProps {
   data: Data;
 }
+const apiUrl = "https://macro-compliance-tracker-p12f.vercel.app/api/daily";
 
 const Home: FC<HomeProps> = ({ data }) => {
   const [results, setResults] = useState(data);
@@ -28,10 +29,7 @@ const Home: FC<HomeProps> = ({ data }) => {
   const getDataForPreviousDay = async () => {
     const currentDate = dayjs(results.date);
     const newDate = currentDate.subtract(1, "day").format("YYYY-MM-DD");
-    const res = await fetch(
-      "https://macro-compliance-tracker-p12f.vercel.app/api/daily?date=" +
-        newDate
-    );
+    const res = await fetch(`${apiUrl}?date=${newDate}`);
     const json = await res.json();
 
     setResults(json);
@@ -40,17 +38,14 @@ const Home: FC<HomeProps> = ({ data }) => {
   const getDataForNextDay = async () => {
     const currentDate = dayjs(results.date);
     const newDate = currentDate.add(1, "day").format("YYYY-MM-DD");
-    const res = await fetch(
-      "https://macro-compliance-tracker-p12f.vercel.app/api/daily?date=" +
-        newDate
-    );
+    const res = await fetch(`${apiUrl}?date=${newDate}`);
     const json = await res.json();
 
     setResults(json);
   };
 
   const updateMacros = async () => {
-    await fetch("https://macro-compliance-tracker-p12f.vercel.app/api/daily", {
+    await fetch(apiUrl, {
       method: "post",
       body: JSON.stringify(results),
     });
@@ -118,9 +113,7 @@ const Home: FC<HomeProps> = ({ data }) => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const res = await fetch(
-    "https://macro-compliance-tracker-p12f.vercel.app/api/daily"
-  );
+  const res = await fetch(apiUrl);
   const json = await res.json();
   return {
     props: {
